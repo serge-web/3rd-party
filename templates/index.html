@@ -1,34 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Add any additional meta tags or external CSS/JS libraries here -->
     <title>Serge Wargame Demonstrator</title>
+    <!-- Include external JavaScript libraries if needed -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>-->
+    <!-- Include your own CSS if needed -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
-    <h1>Serge Wargame Connector</h1>
-<form>
-    <label for="wargame_url">Wargame URL:</label>
-    <input type="text" id="wargame_url" name="wargame_url" value="{{ wargame_url }}" required>
-    <button type="submit">Connect</button>
-    <button type="submit" id="disconnectButton" >Disconnect</button>
-</form>
-    <div id="validationResult"></div>
-    <hr>
-    <div id="connected_user"></div>
-    <span>Recent Message: {{ most_recent_message }}</span>
-    <div id="recent_message">
-         {{ most_recent_message }}
-    </div>
-    <hr>
-    <h2>Submit New Message:</h2>
-    <form method="POST" action="/submit_message">
-        <textarea id="json_data" name="json_data" rows="5" cols="50" required></textarea>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
+  <div id="flex-content-wrapper">
+      <header>
+        <h1>Serge Wargame Connector</h1>
+      </header>
+      <main>
+        <form class="connection-form">
+          <input type="text" placeholder="Wargame URL:" id="wargame_url" name="wargame_url" value="{{ wargame_url }}"  >
+          <div class="connection-buttons">
+            <button type="submit">Connect</button>
+            <button type="submit" id="disconnectButton" style="display: none">Disconnect</button>
+          </div>
+          <div id="validationResult"></div>
+        </form>
+          <div class="container">
+            <div id="connected_user"></div>
+            <section>
+              <h2>Recent Message:</h2>
+              <p>{{ most_recent_message }}</p>
+            </section>
+            <section class="submit-message-section">
+              <h2>Submit New Message:</h2>
+              <form method="POST" action="/submit_message">
+                <textarea placeholder="Submit New Message" id="json_data" name="json_data" rows="5" cols="50" required></textarea>
+                <button type="submit">Submit</button>
+              </form>
+            </section>
+        </div>
+    </main>
+   </div>
+    <!-- Include your own JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
-
- <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
 </html>

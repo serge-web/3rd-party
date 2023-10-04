@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'sscascaccac'
 
 # Define a variable to store the wargame URL
 wargame_url = ""
@@ -44,13 +45,13 @@ def home():
         response = requests.get(server_path + wargame_url + '/last')
         # Check if the request was successful (status code 200)
 
-    return render_template("index.html", wargame_url=wargame_url, most_recent_message='Hello')
+    return render_template("index.html", wargame_url=wargame_url)
 
 @app.route("/connect/", methods=["POST"])
 def connect_wargame():
     global wargame_url  # Consider avoiding global variables if possible
     global json  # Consider avoiding global variables if possible
-
+    # socketio.emit('message', json_data)
     wargame = request.args.get('wargame')
     access = request.args.get('access')
     if not wargame or not access:
