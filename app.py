@@ -38,16 +38,10 @@ json = {
 @app.route("/", methods=["GET", "POST"])
 def home():
     global wargame_url
-    most_recent_message = fetch_most_recent_message()
-
-    print('most_recent_message', most_recent_message)
-    if request.method == "POST":
-        response = requests.get(server_path + wargame_url + '/last')
-        # Check if the request was successful (status code 200)
 
     return render_template("index.html", wargame_url=wargame_url)
 
-@app.route("/connect/", methods=["POST"])
+@app.route("/connect/", methods=["GET"])
 def connect_wargame():
     global wargame_url  # Consider avoiding global variables if possible
     global json  # Consider avoiding global variables if possible
@@ -75,6 +69,23 @@ def connect_wargame():
         return jsonify({"error": str(e)})
 
     return jsonify([])
+
+@app.route("/logs-latest/<string:wargame>", methods=["GET"])
+def fetch_most_recent_message(wargame):
+    try:
+        # Make the GET request to the external API
+        response = requests.get(f"{server_path}{wargame}/wargame-playerlogs/logs-latest")
+        print('responses', response)
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            data = response.json()
+            return jsonify(data)
+        else:
+            return jsonify({"error": f"Request failed with status code {response.status_code}"})
+    except requests.exceptions.RequestException as e:
+        # Handle request exceptions (e.g., connection error, timeouts)
+        return jsonify({"error": str(e)})
+
 # Define a route to submit a new message to the wargame
 @app.route("/submit_message", methods=["POST"])
 def submit_message():
@@ -88,8 +99,6 @@ def submit_message():
      # response = requests.put(server_path + wargame_url, jsons)
     return jsonify({"status": "Message sent successfully"})
 
-def fetch_most_recent_message():
-    return "hello"
 
 if __name__ == "__main__":
     app.run(debug=True)
