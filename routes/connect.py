@@ -24,7 +24,7 @@ def connect_wargame():
             role = next((roleItem for roleItem in force['roles'] if roleItem['roleId'] == access), None)
             if role is not None:
                 break
-        return jsonify(role)
+        return jsonify({"msg": 'ok', "data": role})
     except requests.exceptions.RequestException as e:
         # error_message = str(e)
         return jsonify(None)

@@ -195,51 +195,50 @@ const connectWargame =  async (event) => {
     connectButton.disabled = true;
     wargame_url.disabled = true;
     try {
-      const response = await fetch(`${connectEndpoint}${lastSegment}&host=${base}`, {
-        method: 'GET'
-      });
+      await get(`${connectEndpoint}${lastSegment}&host=${base}`)
+          .then(async (result) => {
+              const requestData = {
+                host: base,
+                wargame: wargameParam,
+              };
 
+              window.history.pushState({}, '', `${lastSegment}&host=${base}`);
+              connectButton.disabled = false;
+              wargame_url.disabled = false;
+              if (result) {
+                await sendRequestToServer(requestData, latestLogsEndpoint).then((res) => {
+                  const mostRecentActivityType = res.activityType.aType;
+                  lastMessage.innerText = `Recent Message: ${mostRecentActivityType}`;
+                  recent_message.appendChild(lastMessage);
+                });
 
-      if (response.ok) {
-        const requestData  = {
-        host: base,
-        wargame: wargameParam
-       };
-
-        window.history.pushState({}, '', `${lastSegment}&host=${base}`)
-        const result = await response.json();
-        connectButton.disabled = false;
-        wargame_url.disabled = false;
-
-          if (result !== null) {
-            await sendRequestToServer(requestData, latestLogsEndpoint).then(res => {
-              const mostRecentActivityType = res.activityType.aType;
-              lastMessage.innerText = `Recent Message: ${mostRecentActivityType}`;
-              recent_message.appendChild(lastMessage);
-            })
-            para.innerText = `Connected user: ${result.name}`;
-            connected_user.appendChild(para);
-            wargame_url.disabled = true;
-            wargame_url.style.background = 'white'
-            activeWargameURL = wargameUrl;
-            connectButton.style.display = 'none';
-            disconnectButton.style.display = 'inline';
-            displayValidationMessage('Connected successfully', 'green')
-
-            } else {
-              displayValidationMessage('Invalid response from the server', 'red')
-            }
-            } else {
-              displayValidationMessage('Failed to connect', 'red')
-            }
-        } catch (error) {
-          displayValidationMessage('An error occurred', 'red')
+                para.innerText = `Connected user: ${result.name}`;
+                connected_user.appendChild(para);
+                wargame_url.disabled = true;
+                wargame_url.style.background = 'white';
+                activeWargameURL = wargameUrl;
+                connectButton.style.display = 'none';
+                disconnectButton.style.display = 'inline';
+                displayValidationMessage('Connected successfully', 'green');
+              } else {
+                displayValidationMessage('Invalid response from the server', 'red');
+              }
+          })
+          .catch((error) => {
+            connectButton.disabled = false;
+            wargame_url.disabled = false;
+            displayValidationMessage('Failed to connect', 'red');
             console.error('Error:', error);
-        }
-    } else {
-      displayValidationMessage('Invalid URL format', 'red')
-    }
-};
+          });
+          } catch (error) {
+            displayValidationMessage('An error occurred', 'red')
+              console.error('Error:', error);
+          }
+      } else {
+        displayValidationMessage('Invalid URL format', 'red')
+      }
+  };
+
 const sendMessage = async (e) => {
   e.preventDefault();
   const displaySentMessage = (messageContent) => {
@@ -308,6 +307,30 @@ const sendRequestToServer = (requestData, url) => {
   });
 };
 
+function get(url) {
+  return new Promise((resolve, reject) => {
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          resolve({ status: response.status });
+          return;
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.msg === 'ok') {
+          resolve(data.data);
+        } else {
+          resolve({ status: 404 });
+        }
+      })
+      .catch((error) => {
+        console.warn('Server failed to respond', url, error);
+        reject(error);
+      });
+  });
+}
 
 
 
