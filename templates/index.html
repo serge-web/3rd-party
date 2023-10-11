@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='shortcut icon' href="{{ url_for('static', filename='img/favicon.ico') }}" />
     <!-- Add any additional meta tags or external CSS/JS libraries here -->
     <title>Serge Wargame Demonstrator</title>
     <!-- Include external JavaScript libraries if needed -->
@@ -17,7 +18,7 @@
       </header>
       <main>
         <form class="connection-form">
-          <input type="text" placeholder="Wargame URL:" id="wargame_url" name="wargame_url" value="{{ wargame_url }}"  >
+          <input type="text" placeholder="Wargame URL:" id="wargame_url" name="wargame_url"  >
           <div class="connection-buttons">
             <button type="submit">Connect</button>
             <button type="submit" id="disconnectButton" style="display: none">Disconnect</button>
@@ -26,15 +27,12 @@
         </form>
           <div class="container">
             <div id="connected_user"></div>
-            <section>
-              <h2>Recent Message:</h2>
-              <p>{{ most_recent_message }}</p>
-            </section>
+            <div id="recent_message"></div>
             <section class="submit-message-section">
               <h2>Submit New Message:</h2>
-              <form method="POST" action="/submit_message">
+              <form >
                 <textarea placeholder="Submit New Message" id="json_data" name="json_data" rows="5" cols="50" required></textarea>
-                <button type="submit">Submit</button>
+                <button id="sendMessage"  type="submit">Submit</button>
               </form>
             </section>
         </div>

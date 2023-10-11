@@ -40,6 +40,31 @@
     background-color: #0056b3;
 }
 
+#connected_user {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 10px; 
+}
+
+#recent_message {
+    background: rgba(0,0,0,.5);
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+#recent_message span {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 10px;
+    border-radius: 9px;
+}
+
 .submit-message-section {
     background-color: #234868;
     padding: 20px;
@@ -52,6 +77,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    min-height: 300px;
 }
 
 .submit-message-section button[type="submit"] {
