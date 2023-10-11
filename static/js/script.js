@@ -138,6 +138,58 @@ const extractLastSegmentAndBaseURL = (url) => {
   return { base, lastSegment, wargameParam };
 };
 
+// Send a POST request to the server and handle the response.
+const sendRequestToServer = (requestData, url) => {
+  return new Promise((resolve, reject) => {
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    })
+    .then((response) => {
+      if (!response.ok) {
+        reject(new Error(`HTTP error! Status: ${response.status}`));
+        return;
+      }
+      return response.json();
+    })
+    .then((responseData) => {
+      resolve(responseData);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+  });
+};
+
+// Send a GET request to the server and handle the response.
+const  get = (url) => {
+  return new Promise((resolve, reject) => {
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          resolve({ status: response.status });
+          return;
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.msg === 'ok') {
+          resolve(data.data);
+        } else {
+          resolve({ status: 404 });
+        }
+      })
+      .catch((error) => {
+        console.warn('Server failed to respond', url, error);
+        reject(error);
+      });
+  });
+}
+
 // Set initial values for wargame_url and jsonData
 wargame_url.value = createNewURL(window.location.href);
 jsonData.value = JSON.stringify(schema);
@@ -282,55 +334,6 @@ disconnectButton.addEventListener('click', disconnectWargame);
 connectButton.addEventListener('click', connectWargame);
 messageButton.addEventListener('click', sendMessage);
 
-const sendRequestToServer = (requestData, url) => {
-  return new Promise((resolve, reject) => {
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    })
-    .then((response) => {
-      if (!response.ok) {
-        reject(new Error(`HTTP error! Status: ${response.status}`));
-        return;
-      }
-      return response.json();
-    })
-    .then((responseData) => {
-      resolve(responseData);
-    })
-    .catch((error) => {
-      reject(error);
-    });
-  });
-};
-
-function get(url) {
-  return new Promise((resolve, reject) => {
-
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          resolve({ status: response.status });
-          return;
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data.msg === 'ok') {
-          resolve(data.data);
-        } else {
-          resolve({ status: 404 });
-        }
-      })
-      .catch((error) => {
-        console.warn('Server failed to respond', url, error);
-        reject(error);
-      });
-  });
-}
 
 
 
