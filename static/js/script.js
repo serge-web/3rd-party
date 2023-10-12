@@ -11,7 +11,7 @@ const disconnectButton = document.getElementById('disconnectButton');
 const validationResult = document.getElementById('validationResult');
 const para = document.createElement('h2');
 const messageButton = document.getElementById('sendMessage');
-
+let intervalId;
 // API endpoints
 const latestLogsEndpoint = '/logs-latest';
 const connectEndpoint = '/connect/';
@@ -112,16 +112,16 @@ const createNewURL = (originalURL) => {
   }
 };
 
-// Helper function to extract query parameters from a URL
-const getURLParameters = (url) => {
-  const searchParams = new URLSearchParams(url);
-  const params = {};
-
-  for (const [key, value] of searchParams.entries()) {
-    params[key] = value;
-  }
-  return params;
-};
+// // Helper function to extract query parameters from a URL
+// const getURLParameters = (url) => {
+//   const searchParams = new URLSearchParams(url);
+//   const params = {};
+//
+//   for (const [key, value] of searchParams.entries()) {
+//     params[key] = value;
+//   }
+//   return params;
+// };
 
 // Helper function to display validation messages
 const displayValidationMessage = (message, color) => {
@@ -194,7 +194,7 @@ const  get = (url) => {
 wargame_url.value = createNewURL(window.location.href);
 jsonData.value = JSON.stringify(schema);
 
-form.addEventListener('submit', function (event) {
+const submitForm = (event) =>  {
   const wargameUrl = wargame_url.value.trim();
   const parts = wargameUrl.split('/');
   const textAfterLastSlash = parts[parts.length - 1];
@@ -205,21 +205,20 @@ form.addEventListener('submit', function (event) {
     displayValidationMessage('Invalid URL format', 'red')
   }
 
-});
+};
 
 const disconnectWargame = async (event) => {
-    event.preventDefault();
-  try {
-    const response = await fetch(connectEndpoint + disconnectURL, {
-      method: 'GET',
-    });
-    const result = await response.json();
+  event.preventDefault();
 
-    if (result.length === 0) {
+  try {
+    const response = await get(connectEndpoint + disconnectURL);
+
+    if (response.length === 0) {
       para.remove();
       sendUserMessage.remove();
       lastMessage.remove();
 
+      stopLogPolling()
       wargame_url.disabled = false;
       wargame_url.value = '';
       activeWargameURL = '';
@@ -231,8 +230,8 @@ const disconnectWargame = async (event) => {
       console.error('Failed to disconnect.');
     }
   } catch (error) {
-      console.error('An error occurred:', error);
-    }
+    console.error('An error occurred:', error);
+  }
 };
 
 const connectWargame =  async (event) => {
@@ -258,12 +257,8 @@ const connectWargame =  async (event) => {
               connectButton.disabled = false;
               wargame_url.disabled = false;
               if (result) {
-                await sendRequestToServer(requestData, latestLogsEndpoint).then((res) => {
-                  const mostRecentActivityType = res.activityType.aType;
-                  lastMessage.innerText = `Recent Message: ${mostRecentActivityType}`;
-                  recent_message.appendChild(lastMessage);
-                });
-
+                // await getLastLogs(requestData, latestLogsEndpoint)
+                await  startLogPolling(requestData, latestLogsEndpoint, 10000)
                 para.innerText = `Connected user: ${result.name}`;
                 connected_user.appendChild(para);
                 wargame_url.disabled = true;
@@ -330,6 +325,32 @@ const sendMessage = async (e) => {
   }
 };
 
+const updateLatestLogs = (requestData, latestLogsEndpoint) => {
+  sendRequestToServer(requestData, latestLogsEndpoint).then((res) => {
+    const mostRecentActivityType = res.activityType.aType;
+    lastMessage.innerText = `Recent Message: ${mostRecentActivityType}`;
+    recent_message.appendChild(lastMessage);
+  });
+}
+
+const startLogPolling = (requestData, latestLogsEndpoint, intervalTime) => {
+  if (intervalId) {
+    clearInterval(intervalId);
+  }
+
+  updateLatestLogs(requestData, latestLogsEndpoint);
+
+  intervalId = setInterval(() => {
+    updateLatestLogs(requestData, latestLogsEndpoint);
+  }, intervalTime);
+}
+
+const stopLogPolling = () => {
+  clearInterval(intervalId);
+  intervalId = null;
+}
+
+form.addEventListener('submit', submitForm);
 disconnectButton.addEventListener('click', disconnectWargame);
 connectButton.addEventListener('click', connectWargame);
 messageButton.addEventListener('click', sendMessage);

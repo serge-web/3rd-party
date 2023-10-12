@@ -12,7 +12,7 @@ def connect_wargame():
     access = request.args.get('access')
     host = request.args.get('host')
     if not wargame or not access:
-        return jsonify([])
+        return jsonify({"msg": 'ok', "data": []})
 
     try:
         response = requests.get(f"{host}/{wargame}/last")
