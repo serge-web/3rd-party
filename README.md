@@ -11,8 +11,7 @@ Python 3.x
 Flask
 Requests (a Python library for making HTTP requests) 
 
-Setup 
-
+# Setup 
 
 1. git clone <https://github.com/serge-web/3rd-party.git>
 2. cd <3rd-party directory>
@@ -23,11 +22,10 @@ python app.py
 
 The application should now be running locally. You should see output in the terminal indicating that the Flask development server is running.
 
-Accessing the Application
+# Accessing the Application
 You can access the application in your web browser by navigating to http://localhost:5000.
 
-
-## Quick Connection to Games & Roles & Host
+# Quick Connection to Games & Roles & Host
 
 For developers, there are convenient methods for directly connecting to specific wargames while registered as a particular user. This can be achieved using the wargame, access, and host URL parameters, as demonstrated below:
 
