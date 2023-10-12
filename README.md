@@ -25,3 +25,19 @@ The application should now be running locally. You should see output in the term
 
 Accessing the Application
 You can access the application in your web browser by navigating to http://localhost:5000.
+
+
+## Quick connect to games & roles & host
+
+For developers, there are convenient methods for directly connecting to specific wargames while registered as a particular user. This can be achieved using the wargame, access, and host URL parameters, as demonstrated below:
+
+```base
+http://localhost:5000/?wargame=wargame-l6nngxlk&access=umpire&host=http://localhost:8080
+
+```
+
+Alternatively, you can provide the URL of the wargame you wish to connect to in the "Wargame URL" field:
+
+```base
+http://localhost:8080/?wargame=wargame-k5kw38gf&access=p5543
+```
