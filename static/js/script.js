@@ -50,10 +50,17 @@ const schema = {
         "content": 'hello'
     },
     "_id": new Date().toISOString(),
-     "_rev":undefined,
+     "_rev": undefined,
     "hasBeenRead": 'false',
     "isOpen": 'false',
     "messageType": "CustomMessage"
+}
+
+// Function to format JSON and set it for a given input element
+const formatAndSetJSON = (inputElement, json) => {
+  const formattedJSON = JSON.stringify(json, null, 4);
+  inputElement.placeholder = formattedJSON;
+  inputElement.value = formattedJSON;
 }
 
 // Helper function to check if a string is valid JSON
@@ -192,7 +199,7 @@ const  get = (url) => {
 
 // Set initial values for wargame_url and jsonData
 wargame_url.value = createNewURL(window.location.href);
-jsonData.value = JSON.stringify(schema);
+formatAndSetJSON(jsonData, schema);
 
 const submitForm = (event) =>  {
   const wargameUrl = wargame_url.value.trim();
@@ -296,7 +303,7 @@ const sendMessage = async (e) => {
   if (!activeWargameURL) {
     return displayValidationMessage('Please join the wargame to send a message.', 'red')
   }
-
+  
   if (!isValidJSON(jsonData.value)) {
      return displayValidationMessage('Please enter text in JSON format.', 'red');
   }
@@ -325,7 +332,7 @@ const sendMessage = async (e) => {
   }
 };
 
-const updateLatestLogs = (requestData, latestLogsEndpoint) => {
+const updateLatestLog = (requestData, latestLogsEndpoint) => {
   sendRequestToServer(requestData, latestLogsEndpoint).then((res) => {
     const mostRecentActivityType = res.activityType.aType;
     lastMessage.innerText = `Recent Message: ${mostRecentActivityType}`;
@@ -338,10 +345,10 @@ const startLogPolling = (requestData, latestLogsEndpoint, intervalTime) => {
     clearInterval(intervalId);
   }
 
-  updateLatestLogs(requestData, latestLogsEndpoint);
+  updateLatestLog(requestData, latestLogsEndpoint);
 
   intervalId = setInterval(() => {
-    updateLatestLogs(requestData, latestLogsEndpoint);
+    updateLatestLog(requestData, latestLogsEndpoint);
   }, intervalTime);
 }
 
