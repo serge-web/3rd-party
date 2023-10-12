@@ -37,5 +37,5 @@ http://localhost:5000/?wargame=wargame-l6nngxlk&access=umpire&host=http://localh
 Alternatively, you can provide the URL of the wargame you want to connect to in the "Wargame URL" input field:
 
 ```base
-http://localhost:8080/?wargame=wargame-k5kw38gf&access=p5543
+http://localhost:8080/?wargame=wargame-l6nngxlk&access=umpire
 ```
