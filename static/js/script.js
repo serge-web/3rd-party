@@ -138,6 +138,7 @@ class WargameApp {
     this.form = document.querySelector('form');
     this.wargameUrl = document.getElementById('wargame_url');
     this.recentMessage = document.getElementById('recent_message');
+    this.lastLog = document.createElement('span');
     this.lastMessage = document.createElement('span');
     this.sendUserMessage = document.createElement('span');
     this.connectedUser = document.getElementById('connected_user');
@@ -187,7 +188,7 @@ class WargameApp {
 
     // Set initial values for wargame_url and jsonData
     this.wargameUrl.value = this.helpers.createNewURL(window.location.href);
-    this.helpers.formatAndSetJSON(this.jsonData, this.schema);
+    // this.helpers.formatAndSetJSON(this.jsonData, this.schema);
     this.setupEventListeners();
   }
 
@@ -224,9 +225,9 @@ class WargameApp {
         
         this.para.remove();
         this.sendUserMessage.remove();
-        this.lastMessage.remove();
+        this.lastLog.remove();
 
-        this.stopLogPolling();
+        this.stopMessagePolling();
         this.wargameUrl.disabled = false;
         this.wargameUrl.value = '';
         this.activeWargameURL = '';
@@ -235,7 +236,7 @@ class WargameApp {
         this.connectButton.style.display = 'inline';
         this.disconnectButton.style.display = 'none';
 
-        this.helpers.displayValidationMessage(this.validationResult, 'dissconnect sccsesful', 'red');
+        this.helpers.displayValidationMessage(this.validationResult, 'disconnected', 'green');
       } else {
         console.error('Failed to disconnect.');
       }
@@ -283,19 +284,19 @@ class WargameApp {
       this.wargameUrl.disabled = false;
 
       if (result) {
-        const container = document.getElementsByClassName("container");
+        // const container = document.getElementsByClassName("container");
         // await this.getLastLogs(requestData, this.latestLogsEndpoint)
-        await this.startLogPolling(requestData, this.latestLogsEndpoint, 10000);
-        container[0].style.display = 'block'
+        await this.startMessagePolling(requestData, this.latestLogsEndpoint, 10000);
+        // container[0].style.display = 'block'
         this.para.innerText = `Connected user: ${result.name}`;
         this.connectedUser.appendChild(this.para);
         this.wargameUrl.disabled = true;
         this.wargameUrl.style.background = 'white';
         
         this.activeWargameURL = wargameUrl;
-        this.connectButton.style.display = 'none';
-        this.disconnectButton.style.display = 'inline';
-        this.helpers.displayValidationMessage(this.validationResult, 'Connected successfully', 'green');
+ 
+        this.helpers.formatAndSetJSON(this.jsonData, this.schema);
+        this.helpers.displayValidationMessage(this.validationResult, 'Load...', 'green');
       } else {
         this.helpers.displayValidationMessage(this.validationResult, 'Invalid response from the server', 'red');
       }
@@ -306,14 +307,27 @@ class WargameApp {
       console.error('Error:', error);
     }
   }
+  
+  LatestLog(log) {
+    const mostRecentActivityType = log.activityType.aType;
+    this.lastLog.innerText = `Recent Log: ${mostRecentActivityType}`;
+    this.recentMessage.appendChild(this.lastLog);
+  }
+
+  LatestMessage(message) {
+    const roleName = message.details.from.roleName;
+    const content = message.message.content;
+    this.lastMessage.innerText =  `Recent message - ${roleName}: ${content} `;
+    this.recentMessage.appendChild(this.lastMessage);
+  }
 
   // Handle sending a user message
   async sendMessage(e) {
     e.preventDefault();
-    const displaySentMessage = (messageContent) => {
-      this.sendUserMessage.innerText = `Send Message: ${messageContent}`;
-      this.recentMessage.appendChild(this.sendUserMessage);
-    };
+    // const displaySentMessage = (messageContent) => {
+    //   this.sendUserMessage.innerText = `Send Message: ${messageContent}`;
+    //   this.recentMessage.appendChild(this.sendUserMessage);
+    // };
 
     if (!this.activeWargameURL) {
       return this.helpers.displayValidationMessage(this.validationResult, 'Please join the wargame to send a message.', 'red');
@@ -336,7 +350,8 @@ class WargameApp {
 
       if (response.msg) {
         const messageContent = response.data.message.content;
-        displaySentMessage(messageContent);
+        // displaySentMessage(messageContent);
+        this.LatestMessage(response.data)
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -353,29 +368,36 @@ class WargameApp {
   }
 
   // Update the latest log message
-  updateLatestLog(requestData, latestLogsEndpoint) {
+  updateLatestMessage(requestData, latestLogsEndpoint) {
     this.apiHandler.sendRequestToServer(requestData, latestLogsEndpoint).then((res) => {
-      const mostRecentActivityType = res.activityType.aType;
-      this.lastMessage.innerText = `Recent Message: ${mostRecentActivityType}`;
-      this.recentMessage.appendChild(this.lastMessage);
+      document.getElementsByClassName("container")[0].style.display = 'block'
+      this.connectButton.style.display = 'none';
+      this.disconnectButton.style.display = 'inline';
+      
+      const latestLog = res[0];
+      const latestMessage = res[1]
+      this.LatestLog(latestLog)
+      this.LatestMessage(latestMessage)
+
+      this.helpers.displayValidationMessage(this.validationResult, 'Connected successfully', 'green');
     });
   }
 
   // Start polling for log updates
-  startLogPolling(requestData, latestLogsEndpoint, intervalTime) {
+  startMessagePolling(requestData, latestLogsEndpoint, intervalTime) {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
 
-    this.updateLatestLog(requestData, latestLogsEndpoint);
+    this.updateLatestMessage(requestData, latestLogsEndpoint);
 
     this.intervalId = setInterval(() => {
-      this.updateLatestLog(requestData, latestLogsEndpoint);
+      this.updateLatestMessage(requestData, latestLogsEndpoint);
     }, intervalTime);
   }
 
   // Stop polling for log updates
-  stopLogPolling() {
+  stopMessagePolling() {
     clearInterval(this.intervalId);
     this.intervalId = null;
   }
