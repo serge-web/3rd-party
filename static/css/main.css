@@ -1,90 +1,99 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 #flex-content-wrapper {
-    background-blend-mode: lighten;
-    background-color: #013c5d;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    height: 100vh;
+  background-blend-mode: lighten;
+  background-color: #013c5d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  height: 100vh;
 }
 
 .connection-form input {
-    min-width: 630px;
-    min-height: 30px;
-    border-radius: 10px;
-    padding: 14px;
+  min-width: 630px;
+  min-height: 30px;
+  border-radius: 10px;
+  padding: 14px;
 }
 
 .connection-buttons {
-    text-align: end;
-    margin-top: 20px;
+  text-align: end;
+  margin-top: 20px;
 }
 
 .connection-buttons button {
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .connection-buttons #disconnectButton {
-    background: red;
+  background: red;
+}
+
+.connection-buttons #disconnectButton:hover {
+  background: green;
 }
 
 .connection-buttons button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 #connected_user {
-    font-size: 24px;
-    color: white;
-    margin-bottom: 10px; 
+  font-size: 24px;
+  color: white;
+  margin-bottom: 10px; 
 }
 
 #recent_message {
-    background: rgba(0,0,0,.5);
-    padding: 10px;
-    border-radius: 6px;
-    display: flex;
-    flex-direction: column;
+  background: rgba(0,0,0,.5);
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
 }
 
 #recent_message span {
-    color: white;
-    font-size: 20px;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
-    background-color: #007bff;
-    border-color: #007bff;
-    padding: 10px;
-    border-radius: 9px;
+  color: white;
+  font-size: 20px;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  background-color: #007bff;
+  border-color: #007bff;
+  padding: 10px;
+  border-radius: 9px;
 }
 
 .submit-message-section {
-    background-color: #234868;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  background-color: #234868;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 #json_data {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    min-height: 300px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  min-height: 300px;
 }
 
 .submit-message-section button[type="submit"] {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
