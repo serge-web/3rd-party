@@ -14,14 +14,6 @@ class Helpers {
     element.placeholder = element.value = JSON.stringify(json, null, 4);
   }
 
-  isValidJSON(jsonString) {
-    try {
-      JSON.parse(jsonString);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
 
 // Helper function to check if a text conforms to a specific format
   isValidFormat(text) {
@@ -103,6 +95,15 @@ class APIHandler {
         body: JSON.stringify(requestData),
       });
 
+      if (response.status === 400) {
+        const errorData = await response.json();
+        if (errorData.error) {
+          throw new Error(errorData.error);
+        } else {
+          throw new Error('Client error! Status: 400');
+        }
+      }
+      
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -318,9 +319,6 @@ class WargameApp {
       return this.helpers.displayValidationMessage(this.validationResult, 'Please join the wargame to send a message.', 'red');
     }
 
-    if (!this.helpers.isValidJSON(this.jsonData.value)) {
-      return this.helpers.displayValidationMessage(this.validationResult,'Please enter text in JSON format.', 'red');
-    }
 
     const { base, wargameParam } = this.extractLastSegmentAndBaseURL(this.activeWargameURL);
     const messageData = {
@@ -334,12 +332,14 @@ class WargameApp {
       this.jsonData.value = '';
 
       if (response.msg) {
-        const messageContent = response.data.message.content;
-        // displaySentMessage(messageContent);
         this.LatestMessage(response.data)
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      if(error.message === "Invalid JSON format") {
+        this.helpers.displayValidationMessage(this.validationResult, error.message, 'red') 
+      } else {
+        console.error('Error sending message:', error);
+      }
     }
   }
 
