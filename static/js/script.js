@@ -1,9 +1,7 @@
 
 // Helper class for utility functions
 class Helpers {
-
   constructor() {
-    // Query parameters
     this.queryParameters = {
       wargame: 'wargame',
       access: 'access',
@@ -13,12 +11,9 @@ class Helpers {
 
   // Function to format JSON and set it for a given input element
   formatAndSetJSON(element, json) {
-    const formattedJSON = JSON.stringify(json, null, 4);
-    element.placeholder = formattedJSON;
-    element.value = formattedJSON;
+    element.placeholder = element.value = JSON.stringify(json, null, 4);
   }
-  
-  // Helper function to check if a string is valid JSON
+
   isValidJSON(jsonString) {
     try {
       JSON.parse(jsonString);
@@ -27,55 +22,45 @@ class Helpers {
       return false;
     }
   }
-  
-  // Helper function to check if a text conforms to a specific format
+
+// Helper function to check if a text conforms to a specific format
   isValidFormat(text) {
     const pattern = /^\?wargame=[a-zA-Z0-9-]+&access=[a-zA-Z0-9-]+$/;
     return pattern.test(text);
   }
-  
+
   // Helper function to extract the last segment from a URL
   extractLastSegmentFromUrl(url) {
     const lastSlashIndex = url.lastIndexOf('/');
-    if (lastSlashIndex !== -1) {
-      return url.slice(lastSlashIndex + 1);
-    } else {
-      // Handle the case when there is no slash in the URL
-      return url;
-    }
+    return lastSlashIndex !== -1 ? url.slice(lastSlashIndex + 1) : url;
   }
-  
-  // Helper function to check if all query parameters exist in a URL
+
+    // Helper function to check if all query parameters exist in a URL
   checkQueryParametersExist(url) {
     const parsedUrl = new URL(url);
-    // Check if all three query parameters exist
+    const { queryParameters } = this;
     return (
-      parsedUrl.searchParams.has(this.queryParameters.wargame) &&
-      parsedUrl.searchParams.has(this.queryParameters.access) &&
-      parsedUrl.searchParams.has(this.queryParameters.host)
+      parsedUrl.searchParams.has(queryParameters.wargame) &&
+      parsedUrl.searchParams.has(queryParameters.access) &&
+      parsedUrl.searchParams.has(queryParameters.host)
     );
   }
-  
-  // Helper function to create a new URL based on query parameters
+
+    // Helper function to create a new URL based on query parameters
   createNewURL(originalURL) {
+    const { queryParameters } = this;
     if (this.checkQueryParametersExist(originalURL)) {
       const parsedUrl = new URL(originalURL);
-      const newUrl = new URL(parsedUrl.searchParams.get(this.queryParameters.host));
-      newUrl.searchParams.set(
-        this.queryParameters.wargame,
-        parsedUrl.searchParams.get(this.queryParameters.wargame)
-      );
-      newUrl.searchParams.set(
-        this.queryParameters.access,
-        parsedUrl.searchParams.get(this.queryParameters.access)
-      );
+      const newUrl = new URL(parsedUrl.searchParams.get(queryParameters.host));
+      newUrl.searchParams.set(queryParameters.wargame, parsedUrl.searchParams.get(queryParameters.wargame));
+      newUrl.searchParams.set(queryParameters.access, parsedUrl.searchParams.get(queryParameters.access));
       return newUrl.toString();
     } else {
       return '';
     }
   }
-  
-  // Helper function to display validation messages
+
+// Helper function to display validation messages
   displayValidationMessage(element, message, color) {
     element.textContent = message;
     element.style.color = color;
