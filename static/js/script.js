@@ -1,4 +1,3 @@
-
 // Helper class for utility functions
 class Helpers {
   constructor() {
@@ -9,25 +8,7 @@ class Helpers {
     };
   }
 
-  // Function to format JSON and set it for a given input element
-  formatAndSetJSON(element, json) {
-    element.placeholder = element.value = JSON.stringify(json, null, 4);
-  }
-
-
-// Helper function to check if a text conforms to a specific format
-  isValidFormat(text) {
-    const pattern = /^\?wargame=[a-zA-Z0-9-]+&access=[a-zA-Z0-9-]+$/;
-    return pattern.test(text);
-  }
-
-  // Helper function to extract the last segment from a URL
-  extractLastSegmentFromUrl(url) {
-    const lastSlashIndex = url.lastIndexOf('/');
-    return lastSlashIndex !== -1 ? url.slice(lastSlashIndex + 1) : url;
-  }
-
-    // Helper function to check if all query parameters exist in a URL
+  // Helper function to check if all query parameters exist in a URL
   checkQueryParametersExist(url) {
     const parsedUrl = new URL(url);
     const { queryParameters } = this;
@@ -65,24 +46,6 @@ class APIHandler {
     this.latestLogsEndpoint = '/logs-latest';
     this.connectEndpoint = '/connect/';
     this.submitMessageEndpoint = '/send_message';
-  }
-
-  async get(url) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        return { status: response.status };
-      }
-      const data = await response.json();
-      if (data.msg === 'ok') {
-        return data.data;
-      } else {
-        return { status: 404 };
-      }
-    } catch (error) {
-      console.warn('Server failed to respond', url, error);
-      throw error;
-    }
   }
 
   async sendRequestToServer(requestData, url) {
@@ -146,56 +109,17 @@ class WargameApp {
 
     // Active Wargame URL
     this.activeWargameURL = '';
-    // JSON schema for sending messages
-    this.schema = {
-      details: {
-        channel: 'game-admin',
-        turnNumber: 4,
-        from: {
-          force: 'Blue',
-          forceColor: '#3dd0ff',
-          forceId: 'blue',
-          roleId: 'CO',
-          roleName: 'CO',
-          iconURL: 'http://localhost:8080/default_img/forceDefault.png',
-        },
-        messageType: 'Chat',
-        timestamp: '2020-12-06T11:06:12.434Z',
-      },
-      message: {
-        content: 'hello',
-      },
-      _id: new Date().toISOString(),
-      _rev: undefined,
-      hasBeenRead: 'false',
-      isOpen: 'false',
-      messageType: 'CustomMessage',
-    };
-
+ 
     // Set initial values for wargame_url and jsonData
     this.wargameUrl.value = this.helpers.createNewURL(window.location.href);
-    // this.helpers.formatAndSetJSON(this.jsonData, this.schema);
     this.setupEventListeners();
   }
 
   // Event listeners setup
   setupEventListeners() {
-    this.form.addEventListener('submit', this.submitForm.bind(this));
     this.disconnectButton.addEventListener('click', this.disconnectWargame.bind(this));
     this.connectButton.addEventListener('click', this.connectWargame.bind(this));
     this.messageButton.addEventListener('click', this.sendMessage.bind(this));
-  }
-
-  submitForm(event) {
-    const wargameUrl = this.wargameUrl.value.trim();
-    const parts = wargameUrl.split('/');
-    const textAfterLastSlash = parts[parts.length - 1];
-    const isConforming = this.helpers.isValidFormat(textAfterLastSlash);
-
-    if (!isConforming) {
-      event.preventDefault();
-      this.helpers.displayValidationMessage('Invalid URL format', 'red');
-    }
   }
 
   // Handle disconnecting from the wargame
@@ -203,9 +127,10 @@ class WargameApp {
     event.preventDefault();
 
     try {
-      const response = await this.apiHandler.get(this.connectEndpoint + this.disconnectURL);
-
-      if (response.length === 0) {
+      const response = await this.apiHandler.sendRequestToServer(this.disconnectURL, this.connectEndpoint);
+      const { msg, data } = response
+      
+      if (data.length === 0 && msg) {
         const container = document.getElementsByClassName("container");
         container[0].style.display = 'none';
         
@@ -237,61 +162,48 @@ class WargameApp {
     const wargameUrl = this.wargameUrl.value.trim();
 
     if (!wargameUrl) return this.helpers.displayValidationMessage(this.validationResult,'Please enter a valid URL', 'red');
+    await this.connectToWargame(wargameUrl)
 
-    const { base, lastSegment, wargameParam } = this.extractLastSegmentAndBaseURL(wargameUrl);
-
-    if (this.helpers.isValidFormat(lastSegment)) {
-      this.connectButton.disabled = true;
-      this.wargameUrl.disabled = true;
-      try {
-        await this.connectToWargame(wargameUrl, base, lastSegment, wargameParam);
-      } catch (error) {
-        this.helpers.displayValidationMessage(this.validationResult, 'An error occurred', 'red');
-        console.error('Error:', error);
-      }
-    } else {
-      this.helpers.displayValidationMessage(this.validationResult, 'Invalid URL format', 'red');
-    }
   }
 
   // Function to connect to the wargame
-  async connectToWargame(wargameUrl, base, lastSegment, wargameParam) {
-    const connectURL = `${this.connectEndpoint}${lastSegment}&host=${base}`;
-
+  async connectToWargame(wargameUrl) {
+    this.connectButton.disabled = true;
+    this.wargameUrl.disabled = true;
+    this.helpers.displayValidationMessage(this.validationResult, 'Load...', 'green');
     try {
-      const result = await this.apiHandler.get(connectURL);
-      const requestData = {
-        host: base,
-        wargame: wargameParam,
-      };
+      const result = await this.apiHandler.sendRequestToServer(wargameUrl, this.connectEndpoint);
+      const { data, msg } = result
+      if (data === null) return  this.helpers.displayValidationMessage(this.validationResult, 'enter right ', 'red')
+        if (msg && data.length !== 0 && data !== null) {
+          const requestData = {
+            host: data.host,
+            wargame: data.wargame,
+          };
 
-      window.history.pushState({}, '', `${lastSegment}&host=${base}`);
-      this.connectButton.disabled = false;
-      this.wargameUrl.disabled = false;
+          await this.startMessagePolling(requestData, this.latestLogsEndpoint, 10000);
+          this.para.innerText = `Connected user: ${data.name}`;
+          this.connectedUser.appendChild(this.para);
+          this.wargameUrl.style.background = 'white';
+  
+          const historyURL = `/?wargame=${data.wargame}&access=${data.roleId}&host=${data.host}`
 
-      if (result) {
-        // const container = document.getElementsByClassName("container");
-        // await this.getLastLogs(requestData, this.latestLogsEndpoint)
-        await this.startMessagePolling(requestData, this.latestLogsEndpoint, 10000);
-        // container[0].style.display = 'block'
-        this.para.innerText = `Connected user: ${result.name}`;
-        this.connectedUser.appendChild(this.para);
-        this.wargameUrl.disabled = true;
-        this.wargameUrl.style.background = 'white';
-        
-        this.activeWargameURL = wargameUrl;
- 
-        this.helpers.formatAndSetJSON(this.jsonData, this.schema);
-        this.helpers.displayValidationMessage(this.validationResult, 'Load...', 'green');
-      } else {
-        this.helpers.displayValidationMessage(this.validationResult, 'Invalid response from the server', 'red');
-      }
+          window.history.pushState({}, '', historyURL);
+          this.connectButton.disabled = false;
+          this.wargameUrl.disabled = false;
+            
+          this.activeWargameURL = wargameUrl;
+     
+        } else {
+          this.connectButton.disabled = false;
+          this.wargameUrl.disabled = false;
+          this.helpers.displayValidationMessage(this.validationResult, 'Invalid response from the server', 'red');
+        }
     } catch (error) {
-      this.connectButton.disabled = false;
-      this.wargameUrl.disabled = false;
-      this.helpers.displayValidationMessage(this.validationResult, 'Failed to connect', 'red');
-      console.error('Error:', error);
-    }
+        this.helpers.displayValidationMessage(this.validationResult, error.message, 'red');
+        this.connectButton.disabled = false;
+        this.wargameUrl.disabled = false;
+      }
   }
   
   LatestLog(log) {
@@ -310,17 +222,15 @@ class WargameApp {
   // Handle sending a user message
   async sendMessage(e) {
     e.preventDefault();
-    // const displaySentMessage = (messageContent) => {
-    //   this.sendUserMessage.innerText = `Send Message: ${messageContent}`;
-    //   this.recentMessage.appendChild(this.sendUserMessage);
-    // };
 
     if (!this.activeWargameURL) {
       return this.helpers.displayValidationMessage(this.validationResult, 'Please join the wargame to send a message.', 'red');
     }
 
-
-    const { base, wargameParam } = this.extractLastSegmentAndBaseURL(this.activeWargameURL);
+    const parsedUrl = new URL(this.activeWargameURL);
+    const wargameParam = parsedUrl.searchParams.get(this.helpers.queryParameters.wargame);
+    const base = `${parsedUrl.protocol}//${parsedUrl.host}`;
+    
     const messageData = {
       data: this.jsonData.value,
       wargame: wargameParam,
@@ -343,24 +253,16 @@ class WargameApp {
     }
   }
 
-  // Helper function to extract base URL, last segment, and wargame parameter from a URL
-  extractLastSegmentAndBaseURL(url) {
-    const parsedUrl = new URL(url);
-    const wargameParam = parsedUrl.searchParams.get(this.helpers.queryParameters.wargame);
-    const base = `${parsedUrl.protocol}//${parsedUrl.host}`;
-    const lastSegment = this.helpers.extractLastSegmentFromUrl(url);
-    return { base, lastSegment, wargameParam };
-  }
-
   // Update the latest log message
   updateLatestMessage(requestData, latestLogsEndpoint) {
     this.apiHandler.sendRequestToServer(requestData, latestLogsEndpoint).then((res) => {
       document.getElementsByClassName("container")[0].style.display = 'block'
       this.connectButton.style.display = 'none';
       this.disconnectButton.style.display = 'inline';
+
+      const {latestLog, latestMessage} = res
+      this.jsonData.placeholder = this.jsonData.value = JSON.stringify(latestMessage, null, 4);
       
-      const latestLog = res[0];
-      const latestMessage = res[1]
       this.LatestLog(latestLog)
       this.LatestMessage(latestMessage)
 
