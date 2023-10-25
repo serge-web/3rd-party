@@ -3,6 +3,17 @@
   padding: 0;
 }
 
+header img {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  width: 200px;
+}
+
+header h1 {
+  padding: 8px;
+}
+
 #flex-content-wrapper {
   background-blend-mode: lighten;
   background-color: #013c5d;
@@ -14,11 +25,26 @@
   height: 100vh;
 }
 
+.connection-form {
+  text-align: center;
+}
+
 .connection-form input {
-  min-width: 630px;
+  width: 100%;
   min-height: 30px;
   border-radius: 10px;
-  padding: 14px;
+  padding: 12px;
+  font-size: 24px;
+}
+
+.connection-form p {
+  font-style: italic;
+  margin-top: 10px;
+  background: #ffa500;
+  color: black;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 4px;
 }
 
 .connection-buttons {
@@ -49,6 +75,10 @@
   background-color: #0056b3;
 }
 
+#validationResult {
+  text-align: -webkit-left;
+  font-size: larger;
+}
 #connected_user {
   font-size: 24px;
   color: white;
@@ -75,7 +105,7 @@
 }
 
 .submit-message-section {
-  background-color: #234868;
+  background-color:#00274b;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -83,10 +113,9 @@
 
 #json_data {
   width: 100%;
-  padding: 10px;
+  padding: 4px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  min-height: 300px;
 }
 
 .submit-message-section button[type="submit"] {
@@ -96,4 +125,88 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background: #ffffff40;
+  height: 100vh;
+  width: 100%;
+}
+
+.loader {
+  transform: rotateZ(45deg);
+  perspective: 1000px;
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  background: #00274b;
+  color: #fff;
+}
+  .loader:before,
+  .loader:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: inherit;
+    height: inherit;
+    border-radius: 50%;
+    transform: rotateX(70deg);
+    animation: 1s spin linear infinite;
+  }
+  .loader:after {
+    color: #FF3D00;
+    transform: rotateY(70deg);
+    animation-delay: .4s;
+  }
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotateZ(360deg);
+  }
+}
+
+@keyframes rotateccw {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes spin {
+  0%,
+  100% {
+    box-shadow: .2em 0px 0 0px currentcolor;
+  }
+  12% {
+    box-shadow: .2em .2em 0 0 currentcolor;
+  }
+  25% {
+    box-shadow: 0 .2em 0 0px currentcolor;
+  }
+  37% {
+    box-shadow: -.2em .2em 0 0 currentcolor;
+  }
+  50% {
+    box-shadow: -.2em 0 0 0 currentcolor;
+  }
+  62% {
+    box-shadow: -.2em -.2em 0 0 currentcolor;
+  }
+  75% {
+    box-shadow: 0px -.2em 0 0 currentcolor;
+  }
+  87% {
+    box-shadow: .2em -.2em 0 0 currentcolor;
+  }
 }

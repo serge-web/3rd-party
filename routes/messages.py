@@ -5,7 +5,7 @@ import requests
 bp = Blueprint('messages', __name__)
 
 # Helper function to validate JSON
-def is_valid_json(json_string):
+def is_valid_json(json_string): 
     try:
         json.loads(json_string)
         return True
