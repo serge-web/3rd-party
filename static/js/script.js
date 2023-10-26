@@ -84,7 +84,7 @@ class WargameApp extends Helpers {
     this.wargameUrl = document.getElementById('wargame_url');
     this.recentMessage = document.getElementById('recent_message');
     this.lastLog = document.createElement('span');
-    this.loader = document.getElementsByClassName("loading");
+        this.loader = document.getElementsByClassName("loading");
     this.lastMessage = document.createElement('span');
     this.sendUserMessage = document.createElement('span');
     this.connectButton = document.querySelector('button[type="submit"]');
@@ -197,7 +197,7 @@ class WargameApp extends Helpers {
           await this.startMessagePolling(requestData, this.latestLogsEndpoint, 10000);
           this.customMessage = custom_message;
           this.jsonData.placeholder = 'type the text';
-
+          
           this.para.innerText = `Connected user: ${data.name}`;
           document.getElementById('connected_user').appendChild(this.para);
           this.wargameUrl.style.background = 'white';
