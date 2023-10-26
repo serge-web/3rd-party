@@ -234,8 +234,9 @@ class WargameApp extends Helpers {
 
   LatestMessage(message) {
     const { roleName } = message.details.from;
+    const { details } = message
     const content = message.message.content;
-
+    this.customMessage.details.channel = details.channel
     this.lastMessage.innerHTML = `<h4>Recent message: ${roleName}</h4>  ${content}`;
     this.lastMessage.style.alignSelf = this.para.innerText.endsWith(`${roleName}`) ? 'flex-end' : 'flex-start';
 
@@ -251,7 +252,11 @@ class WargameApp extends Helpers {
     }
   
     try {
-      const details = { ...this.customMessage.details, timestamp: new Date().toISOString() };
+      const details = { 
+        ...this.customMessage.details, 
+        timestamp: new Date().toISOString() 
+      };
+
       const customMessage = {
         ...this.customMessage,
         _id: new Date().toISOString(),
