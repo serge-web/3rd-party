@@ -90,7 +90,7 @@ class WargameApp extends Helpers {
     this.intervalId = null;
 
     // API endpoints
-    this.latestLogsEndpoint = '/logs-latest';
+    this.latestLogsEndpoint = '/message-latest/';
     this.connectEndpoint = '/connect/';
     this.submitMessageEndpoint = '/send_message';
 
