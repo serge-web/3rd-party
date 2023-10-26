@@ -196,7 +196,7 @@ class WargameApp extends Helpers {
             wargame: data.wargame,
           };
 
-          await this.startMessagePolling(requestData, this.latestLogsEndpoint, 10000000);
+          await this.startMessagePolling(requestData, this.latestLogsEndpoint, 5000);
           this.customMessage = custom_message;
           this.jsonData.placeholder = 'type the text';
           
