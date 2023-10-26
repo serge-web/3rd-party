@@ -18,9 +18,8 @@
     </header>
     <main>
       <form class="connection-form">
-
         <input type="text" id="wargame_url" name="wargame_url" placeholder="Enter the Wargame URL" required>
-        <p>Note: please enter a full connection string including role and access id, such as - <em>http://localhost:8080/?wargame=wargame-l6nngxlk&access=blue-mtg-1</em></p>
+        <p id="note" style="display: none;">Note: please enter a full connection string including role and access id, such as - <em>http://localhost:8080/?wargame=wargame-l6nngxlk&access=blue-mtg-1</em></p>
         <div class="connection-buttons">
           <button type="submit">Connect</button>
           <button type="submit" id="disconnectButton" style="display: none">Disconnect</button>
@@ -33,7 +32,6 @@
         <section class="submit-message-section">
           <h2>Submit New Message:</h2>
           <form>
-            <label for="json_data">Message:</label>
             <textarea id="json_data" name="json_data" placeholder="Submit New Message" rows="5" cols="50" required></textarea>
             <button id="sendMessage" type="submit">Send</button>
             <button id="clearMessage" style="background: red" type="submit">Clear</button>

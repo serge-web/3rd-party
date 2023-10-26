@@ -4,6 +4,7 @@ import requests
 from config import schema  
 
 bp = Blueprint('messages', __name__)
+VALIDATE_JSON_URL = '/validate_json'
 
 # Helper function to validate JSON
 def is_valid_json(json_string): 
@@ -13,7 +14,7 @@ def is_valid_json(json_string):
     except json.JSONDecodeError:
         return False
 
-@bp.route("/validate_json", methods=["POST"])
+@bp.route(VALIDATE_JSON_URL, methods=["POST"])
 def validate_json():
     data = request.get_json()
     json_string = data.get('json_string')
@@ -31,7 +32,7 @@ def submit_message():
         wargame = data.get('wargame')
         message = data.get('data')
         host = data.get('host')
-        validate_json_url = f"{request.host_url}/validate_json"
+        validate_json_url = f"{request.host_url}/{VALIDATE_JSON_URL}"
 
         if wargame is None:
             return jsonify({"error": "The 'wargame' field is required in the JSON data"}), 400
@@ -97,4 +98,3 @@ def fetch_most_recent_message():
 
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)})
-

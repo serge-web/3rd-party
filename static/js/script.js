@@ -73,7 +73,13 @@ class Helpers {
 class WargameApp extends Helpers {
   constructor() {
     super();
+    this.initializeElements() 
+    // // Set initial values for wargame_url and jsonData
+    this.wargameUrl.value = this.createNewURL(window.location.href);
+    this.setupEventListeners();
+  };
 
+  async initializeElements() {
     // DOM elements
     this.wargameUrl = document.getElementById('wargame_url');
     this.recentMessage = document.getElementById('recent_message');
@@ -83,6 +89,7 @@ class WargameApp extends Helpers {
     this.sendUserMessage = document.createElement('span');
     this.connectButton = document.querySelector('button[type="submit"]');
     this.jsonData = document.getElementById('json_data');
+    this.note = document.getElementById('note');
     this.disconnectButton = document.getElementById('disconnectButton');
     this.validationResult = document.getElementById('validationResult');
     this.para = document.createElement('h2');
@@ -99,11 +106,7 @@ class WargameApp extends Helpers {
 
     // Active Wargame URL
     this.activeWargameURL = '';
- 
-    // Set initial values for wargame_url and jsonData
-    this.wargameUrl.value = this.createNewURL(window.location.href);
-    this.setupEventListeners();
-  };
+  }
 
   // Event listeners setup
   setupEventListeners() {
@@ -119,7 +122,10 @@ class WargameApp extends Helpers {
    
   async initializeOnDOMLoad(e) {
     const existingWargameUrl = this.createNewURL(window.location.href);
-    if (!existingWargameUrl) return
+    if (!existingWargameUrl) {
+      this.note.style.display = 'block';
+      return
+    }
     this.connectWargame(e)
   };
 
@@ -136,6 +142,7 @@ class WargameApp extends Helpers {
       this.activeWargameURL = '';
       this.connectButton.style.display = 'inline';
       this.disconnectButton.style.display = 'none';
+      this.note.style.display = 'block';
       this.wargameUrl.disabled = false;
       this.connectButton.disabled = false;
       window.history.pushState({}, '', '/');
@@ -194,12 +201,14 @@ class WargameApp extends Helpers {
           this.para.innerText = `Connected user: ${data.name}`;
           document.getElementById('connected_user').appendChild(this.para);
           this.wargameUrl.style.background = 'white';
+          this.note.style.display = 'none';
   
           const historyURL = `/?wargame=${data.wargame}&access=${data.access}&host=${data.host}`
           window.history.pushState({}, '', historyURL);
 
           this.activeWargameURL = wargameUrl;
         } else {
+          resetUI()
           this.loader[0].style.display = 'none' 
           this.connectButton.disabled = false;
           this.wargameUrl.disabled = false;

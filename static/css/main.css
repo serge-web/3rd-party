@@ -14,6 +14,10 @@ header h1 {
   padding: 8px;
 }
 
+main {
+  width: 42%;
+}
+
 #flex-content-wrapper {
   background-blend-mode: lighten;
   background-color: #013c5d;
@@ -109,6 +113,10 @@ header h1 {
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.submit-message-section h2 {
+  margin-bottom: 8px;
 }
 
 #json_data {
