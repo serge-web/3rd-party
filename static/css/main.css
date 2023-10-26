@@ -103,6 +103,12 @@ main {
   border-bottom: none;
 }
 
+#recent_message h4 {
+  color: #c0c0c0;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
 #recent_message span {
   color: white;
   font-size: 20px;
@@ -112,6 +118,8 @@ main {
   background-color: #007bff;
   border-color: #007bff;
   padding: 10px;
+  align-self: flex-start;
+  min-width: 40%;
   border-radius: 9px;
   max-width: 400px;
   border: 1px solid #ccc;

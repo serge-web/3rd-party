@@ -171,6 +171,8 @@ class WargameApp extends Helpers {
 
   // Handle connecting to the wargame
   async connectWargame(event) {
+    
+
     event.preventDefault();
     const wargameUrl = this.wargameUrl.value.trim();
 
@@ -194,7 +196,7 @@ class WargameApp extends Helpers {
             wargame: data.wargame,
           };
 
-          await this.startMessagePolling(requestData, this.latestLogsEndpoint, 10000);
+          await this.startMessagePolling(requestData, this.latestLogsEndpoint, 10000000);
           this.customMessage = custom_message;
           this.jsonData.placeholder = 'type the text';
           
@@ -224,21 +226,25 @@ class WargameApp extends Helpers {
   
   LatestLog(log) {
     const mostRecentActivityType = log.activityType.aType;
-    this.lastLog.innerText = `Recent Log: ${mostRecentActivityType}`;
+
+    this.lastLog.innerHTML = `<h4>Recent Log</h4> ${mostRecentActivityType}`;
+
     this.recentMessage.appendChild(this.lastLog);
   };
 
   LatestMessage(message) {
-    const roleName = message.details.from.roleName;
+    const { roleName } = message.details.from;
     const content = message.message.content;
-    this.lastMessage.innerText =  `Recent message - ${roleName}: ${content} `;
+
+    this.lastMessage.innerHTML = `<h4>Recent message: ${roleName}</h4>  ${content}`;
+    this.lastMessage.style.alignSelf = this.para.innerText.endsWith(`${roleName}`) ? 'flex-end' : 'flex-start';
+
     this.recentMessage.appendChild(this.lastMessage);
   };
 
   // Handle sending a user message
   async sendMessage(e) {
     e.preventDefault();
-  
     if (!this.activeWargameURL) {
       this.displayValidationMessage(this.validationResult, 'Please join the wargame to send a message.', 'red');
       return;
