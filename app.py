@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, jsonify
-from routes import home, connect, logs, messages
+from routes import home, connect, messages
 app = Flask(__name__)
 app.config.from_object('config')
 
-blueprints = [home.bp, connect.bp, logs.bp, messages.bp]
+blueprints = [home.bp, connect.bp, messages.bp]
 for blueprint in blueprints:
     app.register_blueprint(blueprint)
 
