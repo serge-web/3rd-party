@@ -226,7 +226,7 @@ class WargameApp extends Helpers {
   
   LatestLog(log) {
     const mostRecentActivityType = log.activityType.aType;
-
+    
     this.lastLog.innerHTML = `<h4>Recent Log</h4> ${mostRecentActivityType}`;
 
     this.recentMessage.appendChild(this.lastLog);
@@ -235,12 +235,23 @@ class WargameApp extends Helpers {
   LatestMessage(message) {
     const { roleName } = message.details.from;
     const { details } = message
+    const { forceColor } = details.from
     const content = message.message.content;
-    this.customMessage.details.channel = details.channel
-    this.lastMessage.innerHTML = `<h4>Recent message: ${roleName}</h4>  ${content}`;
-    this.lastMessage.style.alignSelf = this.para.innerText.endsWith(`${roleName}`) ? 'flex-end' : 'flex-start';
+    const { para, customMessage, lastMessage, recentMessage } = this;
+    
+    const messageHTML = `
+    <h4 style="font-size: 18px;">
+        Recent message:
+        <small style="font-size: 18px; color: ${forceColor};">${roleName}</small>
+    </h4>
+    ${content}`;
+    const alignSelf = para.innerText.endsWith(roleName) ? 'flex-end' : 'flex-start';
 
-    this.recentMessage.appendChild(this.lastMessage);
+    customMessage.details.channel = details.channel
+    lastMessage.innerHTML = messageHTML;
+    lastMessage.style.alignSelf = alignSelf;
+    lastMessage.style.border = `1px solid ${forceColor}`;
+    recentMessage.appendChild(lastMessage);
   };
 
   // Handle sending a user message
