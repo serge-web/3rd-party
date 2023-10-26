@@ -126,7 +126,7 @@ main {
   border-radius: 5px;
 }
 
-.submit-message-section button[type="submit"] {
+.submit-message-section button {
   background-color: #007bff;
   color: #fff;
   padding: 10px 20px;

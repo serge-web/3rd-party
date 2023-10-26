@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='shortcut icon' href="{{ url_for('static', filename='img/favicon.ico') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>Serge Wargame Demonstrator</title>
 </head>
 <body>
-  <div class='loading' style="display: none">
-    <div class='loader'></div>
+  <div class="loading" style="display: none">
+    <div class="loader"></div>
   </div>
   <div id="flex-content-wrapper">
     <header>
-      <img src="{{ url_for('static', filename='img/sergeDefault.ico') }}" />
+      <img src="{{ url_for('static', filename='img/sergeDefault.ico') }}" alt="Serge Logo">
       <h1>Serge Wargame Connector</h1>
     </header>
     <main>
@@ -34,7 +34,7 @@
           <form>
             <textarea id="json_data" name="json_data" placeholder="Submit New Message" rows="5" cols="50" required></textarea>
             <button id="sendMessage" type="submit">Send</button>
-            <button id="clearMessage" style="background: red" type="submit">Clear</button>
+            <button id="clearMessage" style="background: red" type="reset">Clear</button>
           </form>
         </section>
       </div>
