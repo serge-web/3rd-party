@@ -104,4 +104,3 @@ def connect_wargame():
         return jsonify({"error": "Failed to fetch data"}), 400
 
     return jsonify([])
-

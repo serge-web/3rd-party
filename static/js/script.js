@@ -1,13 +1,5 @@
 // Helper class for utility functions
-class Helpers {   
-  constructor() {
-    this.queryParameters = {
-      wargame: 'wargame',
-      access: 'access',
-      host: 'host',
-    };
-  };
-  
+class Helpers {     
   async sendRequestToServer(requestData, url) {
     try {
       const response = await fetch(url, {
@@ -72,7 +64,7 @@ class WargameApp extends Helpers {
     this.intervalId = null;
 
     // API endpoints
-    this.latestLogsEndpoint = '/message-latest/';
+    this.latestMessageEndpoint = '/message-latest/';
     this.connectEndpoint = '/connect/';
     this.submitMessageEndpoint = '/send_message';
 
@@ -96,25 +88,10 @@ class WargameApp extends Helpers {
   };
    
   async initializeOnDOMLoad(e) {
-    const { queryParameters } = this;
-    const parsedUrl = new URL(window.location.href);
-  
-    if (
-      parsedUrl.searchParams.has(queryParameters.wargame) &&
-      parsedUrl.searchParams.has(queryParameters.access) &&
-      parsedUrl.searchParams.has(queryParameters.host)
-    ) {
-      const newUrl = new URL(parsedUrl.searchParams.get(queryParameters.host));
-      newUrl.searchParams.set(queryParameters.wargame, parsedUrl.searchParams.get(queryParameters.wargame));
-      newUrl.searchParams.set(queryParameters.access, parsedUrl.searchParams.get(queryParameters.access));
-  
-      this.wargameUrl.value = newUrl.toString();
-    } else {
-      this.wargameUrl.value = '';
+    if (!this.wargameUrl.value) {
       this.note.style.display = 'block';
-      return;
+      return
     }
-  
     this.connectWargame(e);
   }
 
@@ -186,7 +163,7 @@ class WargameApp extends Helpers {
             wargame: data.wargame,
           };
 
-          await this.startMessagePolling(requestData, this.latestLogsEndpoint, 5000);
+          await this.startMessagePolling(requestData, this.latestMessageEndpoint, 5000);
           this.customMessage = custom_message;
           this.jsonData.placeholder = 'type the text';
           
@@ -214,6 +191,7 @@ class WargameApp extends Helpers {
       }
   };
   
+  // Function to display the latest log in a UI element
   LatestLog(log) {
     const mostRecentActivityType = log.activityType.aType;
     
@@ -221,7 +199,8 @@ class WargameApp extends Helpers {
 
     this.recentMessage.appendChild(this.lastLog);
   };
-
+  
+  // Function to display the latest message in a UI element
   LatestMessage(message) {
     const { roleName } = message.details.from;
     const { details } = message
@@ -266,7 +245,7 @@ class WargameApp extends Helpers {
       };
   
       const parsedUrl = new URL(this.activeWargameURL);
-      const wargameParam = parsedUrl.searchParams.get(this.queryParameters.wargame);
+      const wargameParam = parsedUrl.searchParams.get('wargame');
       const base = `${parsedUrl.protocol}//${parsedUrl.host}`;
   
       const messageData = {
@@ -291,8 +270,8 @@ class WargameApp extends Helpers {
   };
 
   // Update the latest log message
-  updateLatestMessage(requestData, latestLogsEndpoint) {
-    this.sendRequestToServer(requestData, latestLogsEndpoint).then((res) => {
+  updateLatestMessage(requestData, latestMessageEndpoint) {
+    this.sendRequestToServer(requestData, latestMessageEndpoint).then((res) => {
       const {latestLog, latestMessage} = res;
 
       if (!this.activeWargameURL) { 
@@ -313,15 +292,15 @@ class WargameApp extends Helpers {
   };
 
   // Start polling for log updates
-  startMessagePolling(requestData, latestLogsEndpoint, intervalTime) {
+  startMessagePolling(requestData, latestMessageEndpoint, intervalTime) {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
 
-    this.updateLatestMessage(requestData, latestLogsEndpoint);
+    this.updateLatestMessage(requestData, latestMessageEndpoint);
 
     this.intervalId = setInterval(() => {
-      this.updateLatestMessage(requestData, latestLogsEndpoint);
+      this.updateLatestMessage(requestData, latestMessageEndpoint);
     }, intervalTime);
   };
 

@@ -16,6 +16,7 @@ Requests (a Python library for making HTTP requests)
 1. git clone <https://github.com/serge-web/3rd-party.git>
 2. cd <3rd-party directory>
 
+.\venv\Scripts\activate
 python -m venv venv
 pip install -r requirements.txt
 python app.py
