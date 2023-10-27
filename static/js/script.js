@@ -37,30 +37,6 @@ class Helpers {
     }
   };
 
-  // Helper function to check if all query parameters exist in a URL
-  checkQueryParametersExist(url) {
-    const parsedUrl = new URL(url);
-    const { queryParameters } = this;
-    return (
-      parsedUrl.searchParams.has(queryParameters.wargame) &&
-      parsedUrl.searchParams.has(queryParameters.access) &&
-      parsedUrl.searchParams.has(queryParameters.host)
-    );
-  };
-
-    // Helper function to create a new URL based on query parameters
-  createNewURL(originalURL) {
-    const { queryParameters } = this;
-    if (this.checkQueryParametersExist(originalURL)) {
-      const parsedUrl = new URL(originalURL);
-      const newUrl = new URL(parsedUrl.searchParams.get(queryParameters.host));
-      newUrl.searchParams.set(queryParameters.wargame, parsedUrl.searchParams.get(queryParameters.wargame));
-      newUrl.searchParams.set(queryParameters.access, parsedUrl.searchParams.get(queryParameters.access));
-      return newUrl.toString();
-    } else {
-      return '';
-    }
-  };
 
   // Helper function to display validation messages
   displayValidationMessage(element, message, color) {
@@ -73,9 +49,8 @@ class Helpers {
 class WargameApp extends Helpers {
   constructor() {
     super();
-    this.initializeElements() 
+    this.initializeElements();
     // // Set initial values for wargame_url and jsonData
-    this.wargameUrl.value = this.createNewURL(window.location.href);
     this.setupEventListeners();
   };
 
@@ -84,7 +59,7 @@ class WargameApp extends Helpers {
     this.wargameUrl = document.getElementById('wargame_url');
     this.recentMessage = document.getElementById('recent_message');
     this.lastLog = document.createElement('span');
-        this.loader = document.getElementsByClassName("loading");
+    this.loader = document.getElementsByClassName("loading");
     this.lastMessage = document.createElement('span');
     this.sendUserMessage = document.createElement('span');
     this.connectButton = document.querySelector('button[type="submit"]');
@@ -121,13 +96,27 @@ class WargameApp extends Helpers {
   };
    
   async initializeOnDOMLoad(e) {
-    const existingWargameUrl = this.createNewURL(window.location.href);
-    if (!existingWargameUrl) {
+    const { queryParameters } = this;
+    const parsedUrl = new URL(window.location.href);
+  
+    if (
+      parsedUrl.searchParams.has(queryParameters.wargame) &&
+      parsedUrl.searchParams.has(queryParameters.access) &&
+      parsedUrl.searchParams.has(queryParameters.host)
+    ) {
+      const newUrl = new URL(parsedUrl.searchParams.get(queryParameters.host));
+      newUrl.searchParams.set(queryParameters.wargame, parsedUrl.searchParams.get(queryParameters.wargame));
+      newUrl.searchParams.set(queryParameters.access, parsedUrl.searchParams.get(queryParameters.access));
+  
+      this.wargameUrl.value = newUrl.toString();
+    } else {
+      this.wargameUrl.value = '';
       this.note.style.display = 'block';
-      return
+      return;
     }
-    this.connectWargame(e)
-  };
+  
+    this.connectWargame(e);
+  }
 
   // Handle disconnecting from the wargame
   async disconnectWargame(event) {
@@ -140,6 +129,7 @@ class WargameApp extends Helpers {
       this.lastMessage.remove();
       this.wargameUrl.value = '';
       this.activeWargameURL = '';
+      this.wargameUrl.style.opacity = '1';
       this.connectButton.style.display = 'inline';
       this.disconnectButton.style.display = 'none';
       this.note.style.display = 'block';
@@ -202,7 +192,7 @@ class WargameApp extends Helpers {
           
           this.para.innerText = `Connected user: ${data.name}`;
           document.getElementById('connected_user').appendChild(this.para);
-          this.wargameUrl.style.background = 'white';
+          this.wargameUrl.style.opacity = '0.6';
           this.note.style.display = 'none';
   
           const historyURL = `/?wargame=${data.wargame}&access=${data.access}&host=${data.host}`

@@ -35,6 +35,7 @@ main {
 
 .connection-form input {
   width: 100%;
+  background: white;
   box-sizing: border-box;
   min-height: 30px;
   border-radius: 10px;
