@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
     <title>Serge Wargame Demonstrator</title>
 </head>
 <body>
@@ -40,6 +41,8 @@
       </div>
     </main>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

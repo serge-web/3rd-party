@@ -53,6 +53,7 @@ class WargameApp extends Helpers {
     this.lastLog = document.createElement('span');
     this.loader = document.getElementsByClassName("loading");
     this.lastMessage = document.createElement('span');
+    this.socket = io.connect('http://' + document.domain + ':' + location.port + '/?');
     this.sendUserMessage = document.createElement('span');
     this.connectButton = document.querySelector('button[type="submit"]');
     this.jsonData = document.getElementById('json_data');
@@ -84,7 +85,19 @@ class WargameApp extends Helpers {
     clearMessageButton.addEventListener('click', () => this.jsonData.value = '');
     this.disconnectButton.addEventListener('click', this.disconnectWargame.bind(this));
     this.connectButton.addEventListener('click', this.connectWargame.bind(this));
+    this.socket.on('message', this.handleSocketResponse.bind(this));
     window.addEventListener('DOMContentLoaded', this.initializeOnDOMLoad.bind(this));
+  };
+
+  handleSocketResponse(response) {
+    if (response.msg) {
+      this.LatestMessage(response.data);
+      this.jsonData.value = '';
+    } else if (response.error) {
+      this.displayValidationMessage(this.validationResult, response.error, 'red');
+    } else {
+      this.displayValidationMessage(this.validationResult, 'Invalid response from the server', 'red');
+    }
   };
    
   async initializeOnDOMLoad(e) {
@@ -146,7 +159,7 @@ class WargameApp extends Helpers {
     if (!wargameUrl) return this.displayValidationMessage(this.validationResult,'Please enter a valid URL', 'red');
     await this.connectToWargame(wargameUrl)
   };
-
+  
   // Function to connect to the wargame
   async connectToWargame(wargameUrl) {
     this.connectButton.disabled = true;
@@ -199,8 +212,8 @@ class WargameApp extends Helpers {
 
     this.recentMessage.appendChild(this.lastLog);
   };
-  
-  // Function to display the latest message in a UI element
+
+    // Function to display the latest message in a UI element
   LatestMessage(message) {
     const { roleName } = message.details.from;
     const { details } = message
@@ -224,50 +237,46 @@ class WargameApp extends Helpers {
   };
 
   // Handle sending a user message
-  async sendMessage(e) {
-    e.preventDefault();
-    if (!this.activeWargameURL) {
-      this.displayValidationMessage(this.validationResult, 'Please join the wargame to send a message.', 'red');
-      return;
-    }
-  
-    try {
-      const details = { 
-        ...this.customMessage.details, 
-        timestamp: new Date().toISOString() 
-      };
+async sendMessage(e) {
+  e.preventDefault();
+  if (!this.activeWargameURL) {
+    this.displayValidationMessage(this.validationResult, 'Please join the wargame to send a message.', 'red');
+    return;
+  }
 
-      const customMessage = {
-        ...this.customMessage,
-        _id: new Date().toISOString(),
-        message: { content: this.jsonData.value },
-        details: details
-      };
-  
-      const parsedUrl = new URL(this.activeWargameURL);
-      const wargameParam = parsedUrl.searchParams.get('wargame');
-      const base = `${parsedUrl.protocol}//${parsedUrl.host}`;
-  
-      const messageData = {
-        data: JSON.stringify(customMessage),
-        wargame: wargameParam,
-        host: base,
-      };
-  
-      const response = await this.sendRequestToServer(messageData, this.submitMessageEndpoint);
-  
-      if (response.msg) {
-        this.LatestMessage(response.data);
-        this.jsonData.value = ''
-      }
-    } catch (error) {
-      if (error.message === "Invalid JSON format") {
-        this.displayValidationMessage(this.validationResult, error.message, 'red');
-      } else {
-        console.error('Error sending message:', error);
-      }
+  try {
+    const details = {
+      ...this.customMessage.details,
+      timestamp: new Date().toISOString(),
+    };
+
+    const customMessage = {
+      ...this.customMessage,
+      _id: new Date().toISOString(),
+      message: { content: this.jsonData.value },
+      details: details
+    };
+
+    const parsedUrl = new URL(this.activeWargameURL);
+    const wargameParam = parsedUrl.searchParams.get('wargame');
+    const base = `${parsedUrl.protocol}//${parsedUrl.host}`;
+
+    const messageData =  {
+      data: JSON.stringify(customMessage),
+      wargame: wargameParam,
+      host: base,
+    };
+    this.socket.emit('message', messageData);
+
+  } catch (error) {
+    if (error.message === "Invalid JSON format") {
+      this.displayValidationMessage(this.validationResult, error.message, 'red');
+    } else {
+      console.error('Error sending message:', error);
+      this.displayValidationMessage(this.validationResult, 'Error sending the message', 'red');
     }
-  };
+  }
+};
 
   // Update the latest log message
   updateLatestMessage(requestData, latestMessageEndpoint) {
