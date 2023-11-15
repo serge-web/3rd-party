@@ -15,11 +15,10 @@ Requests (a Python library for making HTTP requests)
 
 1. git clone <https://github.com/serge-web/3rd-party.git>
 2. cd <3rd-party directory>
-
-.\venv\Scripts\activate
-python -m venv venv
-pip install -r requirements.txt
-python app.py
+3. .\venv\Scripts\activate
+4. python -m venv venv
+5. pip install -r requirements.txt
+6. python app.py
 
 The application should now be running locally. You should see output in the terminal indicating that the Flask development server is running.
 
