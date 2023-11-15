@@ -1,0 +1,247 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+header img {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  width: 200px;
+}
+
+header h1 {
+  padding: 8px;
+}
+
+main {
+  min-width: 42%;
+}
+
+#flex-content-wrapper {
+  background-blend-mode: lighten;
+  background-color: #013c5d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  height: 100vh;
+}
+
+.connection-form {
+  text-align: center;
+}
+
+.connection-form input {
+  width: 100%;
+  background: white;
+  box-sizing: border-box;
+  min-height: 30px;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 24px;
+}
+
+.connection-form p {
+  font-style: italic;
+  margin-top: 10px;
+  background: #ffa500;
+  color: black;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.connection-buttons {
+  text-align: end;
+  margin-top: 20px;
+}
+
+.connection-buttons button {
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.connection-buttons #disconnectButton {
+  background: red;
+}
+
+.connection-buttons #disconnectButton:hover {
+  background: green;
+}
+
+.connection-buttons button:hover {
+  background-color: #0056b3;
+}
+
+#validationResult {
+  text-align: -webkit-left;
+  font-size: larger;
+}
+#connected_user {
+  font-size: 24px;
+  color: white;
+  margin-bottom: 10px; 
+}
+
+#recent_message {
+  background: white;
+  padding: 10px;
+  min-height: 110px;
+  border-radius: 6px 6px 0px 0px;
+  max-height: 388px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-bottom: none;
+}
+
+#recent_message h4 {
+  color: #c0c0c0;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+#recent_message span {
+  color: white;
+  font-size: 20px;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  line-height: 1.2;
+  background-color: #007bff;
+  border-color: #007bff;
+  padding: 10px;
+  align-self: flex-start;
+  min-width: 47%;
+  border-radius: 9px;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+}
+
+.submit-message-section {
+  background-color:#00274b;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 0px 0px 6px 6px;
+}
+
+.submit-message-section h2 {
+  margin-bottom: 8px;
+}
+
+#json_data {
+  width: 100%;
+  padding: 8px;
+  font-weight: bold;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.submit-message-section button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submit-message-section button:hover{
+  /* padding: 5px 10px;
+  font-size: 16px; */
+  opacity: 0.7;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background: #ffffff40;
+  height: 100vh;
+  width: 100%;
+}
+
+.loader {
+  transform: rotateZ(45deg);
+  perspective: 1000px;
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  background: #00274b;
+  color: #fff;
+}
+  .loader:before,
+  .loader:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: inherit;
+    height: inherit;
+    border-radius: 50%;
+    transform: rotateX(70deg);
+    animation: 1s spin linear infinite;
+  }
+  .loader:after {
+    color: #FF3D00;
+    transform: rotateY(70deg);
+    animation-delay: .4s;
+  }
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotateZ(360deg);
+  }
+}
+
+@keyframes rotateccw {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes spin {
+  0%,
+  100% {
+    box-shadow: .2em 0px 0 0px currentcolor;
+  }
+  12% {
+    box-shadow: .2em .2em 0 0 currentcolor;
+  }
+  25% {
+    box-shadow: 0 .2em 0 0px currentcolor;
+  }
+  37% {
+    box-shadow: -.2em .2em 0 0 currentcolor;
+  }
+  50% {
+    box-shadow: -.2em 0 0 0 currentcolor;
+  }
+  62% {
+    box-shadow: -.2em -.2em 0 0 currentcolor;
+  }
+  75% {
+    box-shadow: 0px -.2em 0 0 currentcolor;
+  }
+  87% {
+    box-shadow: .2em -.2em 0 0 currentcolor;
+  }
+}
